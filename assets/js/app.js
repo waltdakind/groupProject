@@ -7,8 +7,45 @@ var trends = [];
 // Firebase ref
 trendRef = new Firebase('https://uncommitteds.firebaseio.com/');
 
+
+
 /* 2: Functions / Obejects
  * ======================= */
+
+// get a popular youtube video with a keyword, place at 'location' (like jQuery)
+function youtubeCatch(topic, location) {
+	topic = encodeURI(topic);
+	// base youtube URL
+	var youtube_url = "https://www.googleapis.com/youtube/v3/" +
+										"search?part=snippet&maxResults=1&order=viewCount&" +
+										"key=AIzaSyDmDiJaKVpOL729WgW2zpbnpzR_XKKM_Es&q=";
+	// add topic to url
+	youtube_url += topic;
+
+	console.log(youtube_url);
+
+	// make API call to youtube api
+	$.ajax({
+		url: youtube_url,
+		type: 'GET',
+		success: function(response) {
+			console.log(response.items[0].id.videoId);
+			
+			// get video id
+			var videoID = response.items[0].id.videoId;
+
+			// make embed
+			var embed = $('<iframe frameborder="0" allowfullscreen></iframe>')
+			embed.attr('width', "560") 
+					 .attr('height', "315" )
+					 .attr('src', "https://www.youtube.com/embed/" + videoID);
+			$(location).html(embed); // arg 2 is used here
+		},
+		error: function(error) {
+			console.log("youtubeCatch Error: " + error);
+		}
+	})
+};
 
 // main interface
 var interface = {
@@ -114,4 +151,11 @@ var interface = {
 
 
 // 3: Calls
-$(document).on("load", interface.api());
+
+// $(document).on("ready", function() {
+// 	var video = youtubeCatch("Ben-Hur");
+// })
+
+		
+
+

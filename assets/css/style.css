@@ -43,7 +43,7 @@ p#modalpara{
 
 .btn-primary{
 	float: right;
-	claer: both;
+	clear: both;
 	margin-right: 50px;
 	margin-top: -45px;
 	background-color: #000;
