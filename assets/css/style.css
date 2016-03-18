@@ -1,0 +1,53 @@
+
+.jumbotron{
+	padding-bottom: -10px
+}
+.navbar{
+	background-color: #000000;
+	font-family: 'Lobster', cursive;
+	padding-bottom: 10px;
+}
+
+#logo{
+	font-family: 'Lobster', cursive;
+	color: white;
+	text-align: center;
+
+}
+
+#aboutUs{
+	margin-right: 20px;
+}
+
+
+{
+	height: 30px;
+	width: 100%;
+}
+
+h1#abouttitle{
+text-align: center;
+
+}
+
+h3#modalcontent{
+	text-align:center;
+	font-family: 'Cabin Condensed', sans-serif;
+}
+
+p#modalpara{
+	text-align:center;
+	font-family: 'Archivo Narrow', sans-serif;
+	font-size: 22px;
+}
+
+.btn-primary{
+	float: right;
+	clear: both;
+	margin-right: 50px;
+	margin-top: -45px;
+	background-color: #000;
+	font-size: 18px;
+	border: none;
+}
+

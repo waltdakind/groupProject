@@ -12,8 +12,8 @@ trendRef = new Firebase('https://uncommitteds.firebaseio.com/');
 /* 2: Functions / Obejects
  * ======================= */
 
-// get a popular youtube video with a keyword
-function youtubeCatch(topic) {
+// get a popular youtube video with a keyword, place at 'location' (like jQuery)
+function youtubeCatch(topic, location) {
 	topic = encodeURI(topic);
 	// base youtube URL
 	var youtube_url = "https://www.googleapis.com/youtube/v3/" +
@@ -39,7 +39,7 @@ function youtubeCatch(topic) {
 			embed.attr('width', "560") 
 					 .attr('height', "315" )
 					 .attr('src', "https://www.youtube.com/embed/" + videoID);
-			$('body').html(embed);
+			$(location).html(embed); // arg 2 is used here
 		},
 		error: function(error) {
 			console.log("youtubeCatch Error: " + error);
@@ -152,9 +152,9 @@ var interface = {
 
 // 3: Calls
 
-$(document).on("ready", function() {
-	var video = youtubeCatch("Ben-Hur");
-})
+// $(document).on("ready", function() {
+// 	var video = youtubeCatch("Ben-Hur");
+// })
 
 		
 
