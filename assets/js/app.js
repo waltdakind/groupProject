@@ -40,6 +40,7 @@ function youtubeCatch(topic, location) {
 					 .attr('height', "315" )
 					 .attr('src', "https://www.youtube.com/embed/" + videoID);
 			$(location).html(embed); // arg 2 is used here
+			console.log(embed);
 		},
 		error: function(error) {
 			console.log("youtubeCatch Error: " + error);
@@ -133,6 +134,7 @@ var interface = {
 							trends : trends,
 	          	timeAdded: Firebase.ServerValue.TIMESTAMP
 						})
+						console.log(trends);
 					},
 					// send error message on error
 					error: function(errors) {
@@ -152,9 +154,10 @@ var interface = {
 
 // 3: Calls
 
-// $(document).on("ready", function() {
-// 	var video = youtubeCatch("Ben-Hur");
-// })
+$(document).on("ready", function() {
+	var video = youtubeCatch("Ben-Hur", 'body');
+	interface.api();
+})
 
 		
 
