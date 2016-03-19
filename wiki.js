@@ -23,8 +23,15 @@ var runQuery = function(wikiUrl) {
 	
 	// The AJAX function uses the URL and Gets the JSON data associated with it. The data then gets stored in the variable called: "wikiData"
 	$.ajax({url: wikiUrl,
-			format: 'json',
-			method: "GET"
+      jsonp: "callback",
+			dataType: 'jsonp',
+      data: {
+        q: "Get relevant data from twitter trend",
+        format: "json"
+      },
+      success: function (response) {
+        console.log(response);
+      }
 		}) 
 		.done(function(wikiData) {
 			// containers for what we'll be grabbing
@@ -49,7 +56,7 @@ var runQuery = function(wikiUrl) {
         //  console.log(title);
 
           // push to firebase
-          WikiRef.push({
+          wikiBaseRef.push({
   	title: this.title,
   	intro: this.extract,
   	link: wikiLink
