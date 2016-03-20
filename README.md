@@ -1,3 +1,10 @@
+TrendGetter aggregates current twitter trends and makes AJAX calls to Wikipedia and YouTube searching for related content to display to to the site visitor. 
+
+Visit here to see the deployed app:
+http://trendgetter.herokuapp.com/ 
+
+Resources
+==========
 Twitter Proxy
 =============
 
