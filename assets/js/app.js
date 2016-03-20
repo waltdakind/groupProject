@@ -91,12 +91,15 @@ var interface = {
 			// catch the timestamp of the last update
 			if (snapshot.child("twitter").child("timeAdded").exists()) {
 				var time_record = snapshot.child("twitter").val().timeAdded;
+				console.log( '--Time Record --');
 				console.log(time_record);
 				// catch the current timestamp
 				var time_now = Date.now();
+			    console.log( '--Current Time --');
 				console.log(time_now);
 				// figure out the dif between the recorded time and now
 				var time_dif = time_now - time_record;
+			    console.log( '--Time Difference--');				
 				console.log(time_dif);
 			}
 			if (time_dif >= 300000 || !snapshot.child("twitter").child("timeAdded").exists()) {
