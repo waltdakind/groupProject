@@ -1,47 +1,52 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title>TrendGetter</title>
+  <head>
+    <meta charset="UTF-8">
+    <title>TrendGetter</title>
 
-		 <!-- Compiled and minified CSS -->
-		 
-  				<!-- Latest compiled and minified CSS -->
+     <!-- Compiled and minified CSS -->
+     
+          <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-				<link rel="stylesheet" href="assets/css/style.css">
-				<link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
-        <link href='https://fonts.googleapis.com/css?family=Cabin+Condensed' rel='stylesheet' type='text/css'>
-        <link href='https://fonts.googleapis.com/css?family=Cabin+Condensed|Archivo+Narrow' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="assets/css/style.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <!-- FONTS -->
+            <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+            <link href='https://fonts.googleapis.com/css?family=Cabin+Condensed' rel='stylesheet' type='text/css'>
+            <link href='https://fonts.googleapis.com/css?family=Cabin+Condensed|Archivo+Narrow' rel='stylesheet' type='text/css'>
 
     <!-- Latest compiled and minified JavaScript -->
+   
+    <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-		<script src="https://code.jquery.com/jquery.js"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-		<script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
 
-	</head>
-	<body>
-  <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <h1 id="logo"> TrendGetter</h1>      
-    </div>
+  </head>
 
-<!-- Large modal -->
+  <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    
+      <h1 id="logo"> TrendGetter</h1> 
+    
+  </div>
+
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">About</button>
 
 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="aboutUsModal">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
+      
       <h1 id="abouttitle">TrendGetter</h1>
         <h3 id="modalcontent">Here at TrendGetter, our goal is simple: keep you informed on what's trending!</h3> <br>
         <p id="modalpara">
           To use TrendGetter, use the arrows on either side of the page to cycle through images of the latest trending topics according to Twitter. When you see a topic you want to stay informed on, click the arrow underneath that image to <em> Learn More </em>!
         </p>
+
     </div>
   </div>
 </div>
 
-  </nav>
+</nav>
 
 
 <div class="jumbotron">
@@ -53,36 +58,80 @@
       <li data-target = "#myCarousel" data-slide-to = "0" class = "active"></li>
       <li data-target = "#myCarousel" data-slide-to = "1"></li>
       <li data-target = "#myCarousel" data-slide-to = "2"></li>
+      <li data-target = "#myCarousel" data-slide-to = "3"></li>
+      <li data-target = "#myCarousel" data-slide-to = "4"></li>
+      <li data-target = "#myCarousel" data-slide-to = "5"></li>
+      <li data-target = "#myCarousel" data-slide-to = "6"></li>
+      <li data-target = "#myCarousel" data-slide-to = "7"></li>
+      <li data-target = "#myCarousel" data-slide-to = "8"></li>
+      <li data-target = "#myCarousel" data-slide-to = "9"></li>
+      <li data-target = "#myCarousel" data-slide-to = "10"></li>
    </ol>   
    
    <!-- Carousel items -->
+
    <div class = "carousel-inner">
-      <div class = "item active">
-         <img src = "./assets/images/Wired1.png" alt = "First slide">
+      <div class = "item active">  
+          <img src = "./assets/images/Wired1.png" alt = "First slide"> 
       </div>
       
       <div class = "item">
-         <img src = "./assets/images/Wired2.png" alt = "Second slide">
+          <img src = "./assets/images/Wired2.png" alt = "First slide">
       </div>
       
       <div class = "item">
-         <img src = "./assets/images/Wired3.png" alt = "Third slide">
+         <img src = "./assets/images/Wired3.png" alt = "First slide">
+      </div>
+  
+      <div class = "item">
+         <img src = "./assets/images/Wired4.png" alt = "Third slide">
+      </div>
+
+      <div class = "item">
+         <img src = "./assets/images/Wired5.png" alt = "Third slide">
+      </div>
+
+      <div class = "item">
+         <img src = "./assets/images/Wired6.png" alt = "Third slide">
+      </div>
+
+      <div class = "item">
+         <img src = "./assets/images/Wired7.png" alt = "Third slide">
+      </div>
+
+      <div class = "item">
+         <img src = "./assets/images/Wired8.png" alt = "Third slide">
+      </div>
+
+      <div class = "item">
+         <img src = "./assets/images/Wired9.png" alt = "Third slide">
+      </div>
+
+      <div class = "item">
+         <img src = "./assets/images/Wired10.png" alt = "Third slide">
       </div>
    </div>
-   
+                                  
    <!-- Carousel nav -->
-   <a class = "carousel-control left" href = "#myCarousel" data-slide = "prev">&lsaquo;</a>
-   <a class = "carousel-control right" href = "#myCarousel" data-slide = "next">&rsaquo;</a>
+  
+   <a class = "carousel-control left" href = "#myCarousel" data-slide = "prev">
+     <i class="fa fa-angle-double-left" id="leftArrow"></i>
+    </button>
+   </a>
+    <a class = "carousel-control right" href = "#myCarousel" data-slide = "next">
+      <i class="fa fa-angle-double-right" id="rightArrow"></i>
+    </button>
+   </a>
    
 </div> 
-<!-- Optional Captions
-You can add captions to your slides easily with the .carousel-caption element within any .item. Place just about any optional HTML within there and it will be automatically aligned and formatted. The following example demonstrates this − -->
-
-
 
 </div>
-<br><br><br><br><br><br><br><br>
-<div class="container">
+
+
+
+
+
+<div class="container" id="infoSpot">
 <div class="row">
   
   <div class="col-md-5" id="wikiSpot">
@@ -101,9 +150,10 @@ You can add captions to your slides easily with the .carousel-caption element wi
 
 
 </div>
+</div>
+<br><br><br><br><br><br><br><br>
 
-
-		<script src="assets/js/app.js"></script>
+    <script src="assets/js/app.js"></script>
     <script src="assets/js/style.js"></script>
-	</body>
+  </body>
 </html>
