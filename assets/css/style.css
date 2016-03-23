@@ -1,15 +1,14 @@
 
-
 .jumbotron#navBar{
 	height: 30px;
 }
 
-
-
-
 .jumbotron{
-	padding-bottom: -10px
+
+	height: 720px;
+	margin-bottom: 550px;
 }
+
 .navbar{
 	background-color: #000000;
 	font-family: 'Lobster', cursive;
@@ -35,6 +34,13 @@
 	width: 100%;
 }
 
+/*.carousel-inner>.item>a>img, .carousel-inner>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img {
+    border: 250px,;
+    position: relative;
+    left: 500px;
+    margin-top: 200px;
+}*/
+
 h1#abouttitle{
 text-align: center;
 
@@ -42,6 +48,14 @@ text-align: center;
 
 #aboutUsmodal{
 	background-color: #fff;
+	display: block;
+    position: absolute;
+    left: 60%;
+    height: 88%;
+    width: 28%;
+    overflow-y:auto;
+    overflow-x:auto;
+    border-radius: 0px
 }
 h3#modalcontent{
 	text-align:center;
@@ -79,7 +93,6 @@ p#modalpara{
   background-color: gray;
   border: none;
 }
-
 
 .carousel-control right{
 
