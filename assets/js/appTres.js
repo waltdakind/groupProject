@@ -4,15 +4,14 @@
 // Trend Array
 var trends = [];
 var siteInfo = [];
-var appendages = Object;
 
-var dateRef = new Firebase("https://uncommitteds.firebaseio.com/timeAdded");
-var appendageRef = new Firebase("https://uncommitteds.firebaseio.com/appendages");
+var wikiBaseRef = new Firebase("https://uncommitteds.firebaseio.com/wikiSearch");
+var trendRef = new Firebase("https://uncommitteds.firebaseio.com/twitter/trends");
 // user's inputs via HTML
 var wikiSearch 	= "";
 
 // URL  to query wikipedia
-var wikiUrlBase = "https://en.wikipedia.org/w/api.php?format=json&action=query&&redirects&prop=extracts|pageimages&exintro=&explaintext=&titles=";
+var wikiUrlBase = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=";
 
 // Array to hold the various article info
 //var wikiArray = [];
@@ -82,21 +81,19 @@ var interface = {
           // push all of the current trend's data to firebase
           trends.push(latestTrends[i].name);
         }
+        for (var i = 0; i < trends.length || 10 < siteInfo.length; i++) {
+          console.log(interface.wikipedia(wikiUrlBase + trends[i], i));
+        }
       },
       // send error message on error
       error: function(errors) {
         console.log(errors);
       }
-    }).done(function(){
-      appendageRef.set("");
-      for (var i = 0; i < trends.length || 10 < siteInfo.length; i++) {
-        console.log(interface.wikipedia(wikiUrlBase + trends[i], i));
-
-      } 
     })
   },
+
   // call wikipedia api
-  wikipedia: function(wikiUrl, iterator) {    
+  wikipedia: function(arrwikiUrl, iterator) {    
     // The AJAX function uses the URL and Gets the JSON data associated with it. The data then gets stored in the variable called: "wikiData"
     $.ajax({url: wikiUrl,
         jsonp: "callback",
@@ -110,14 +107,15 @@ var interface = {
         var pageid  = "";
         var intro   = "";
         var title   = "";
-        var thumbURL = "";
-        var imageFile = "";
 
         // run through each of the pages (there's only one)
         $.each(wikiData.query.pages, function() {
 
           // if there's a page id, run this information
           if(this.pageid){
+
+            good = true;
+            console.log(good);
             // grab pageid
             pageid = this.pageid;
             var wikiLink = "https://en.wikipedia.org/?curid=" + pageid;
@@ -135,20 +133,8 @@ var interface = {
               intro: intro,
               link: wikiLink
             };
-            // if there's a page image, grab the image info
-            if(this.pageimage) {
-              imageFile = this.pageimage;
-              thumbURL = this.thumbnail.source;
-              console.log(thumbURL);
-              var fullPortion = thumbURL.match(/thumb\/(.*?)(....|$)/)[2];
-              var fullURL = "https://upload.wikimedia.org/wikipedia/commons/" +
-                            fullPortion + "/" + imageFile;
-              siteInfo[iterator].imageURL = fullURL;
-
-              // TIME FOR INSANITY
-
-
-            }
+            
+            ;
           }
           else {
             //console.log("noWiki")
@@ -157,8 +143,14 @@ var interface = {
       }
     }).done(function() {
       console.log("okay");
-      if (siteInfo[iterator] != undefined) {
-        interface.youtube(siteInfo[iterator].title, iterator);
+      for (var i = 0; i < siteInfo.length; i++){
+        if (siteInfo[i] === undefined) {
+          siteInfo.splice(i, 1);
+          i--;
+        }
+        else {
+          interface.youtube(siteInfo[i].title, i);
+        }
       }
     })
   },
@@ -167,8 +159,8 @@ var interface = {
     topic = encodeURI(topic);
     // base youtube URL
     var youtube_url = "https://www.googleapis.com/youtube/v3/" +
-                      "search?part=snippet&maxResults=1&type=video&order=relevance" +
-                      "&key=AIzaSyDmDiJaKVpOL729WgW2zpbnpzR_XKKM_Es&q=";
+                      "search?part=snippet&maxResults=1&order=viewCount&" +
+                      "key=AIzaSyDmDiJaKVpOL729WgW2zpbnpzR_XKKM_Es&q=";
     // add topic to url
     youtube_url += topic;
 
@@ -179,7 +171,6 @@ var interface = {
       success: function(response) {        
         // get video id
         var videoID = response.items[0].id.videoId;
-        console.log(videoID);
 
         // make embed
         var embed = $('<iframe frameborder="0" allowfullscreen></iframe>')
@@ -188,15 +179,17 @@ var interface = {
              .attr('src', "https://www.youtube.com/embed/" + videoID);
         
         // send the iframe to the right part of siteInfo
-        siteInfo[iterator].video = embed[0].outerHTML;
+        siteInfo[iterator].video = embed;
       },
       error: function(error) {
         console.log("youtubeCatch Error: " + error);
       }
-    }).done(function(){
-      appendageRef.push(siteInfo[iterator]);
-      appendageRef.once("value", function(snapshot){
-        appendages = snapshot.val();
+    }).done(function() {
+      trendRef.once("value", function(snapshot) {
+        console.log(siteInfo);
+        console.log(snapshot);
+        snapshot.child("timeAdded").set(Date.now())
+        snapshot.child("appendages").set(siteInfo);
       })
     })
   },
@@ -204,22 +197,17 @@ var interface = {
   // api method: call twitter API for Trends, save it to firebase
   api: function() {
     // first check if time has been updated
-    dateRef.once("value", function(snapshot){
-      // catch the appendages obj in a global var
-      appendageRef.once("value", function(snapshot){
-        appendages = snapshot.val();
-      })
+    trendRef.once("value", function(snapshot){
       // catch the timestamp of the last update
-      if (snapshot.exists()) {
-        var time_record = snapshot.val();
+      if (snapshot.child("timeAdded").exists()) {
+        var time_record = snapshot.child("twitter").val().timeAdded;
         // catch the current timestamp
         var time_now = Date.now();
         // figure out the dif between the recorded time and now
         var time_dif = time_now - time_record;
       }
-      if (time_dif >= 300000 || !snapshot.exists()) { 
+      if (time_dif >= 300000 || !snapshot.child("timeAdded").exists()) {
         // then make ajax calls
-        dateRef.set(Date.now());
         interface.twitter();
       }
       // if updated within 5 mins, tell us how many mins we have left for new data
@@ -228,11 +216,11 @@ var interface = {
         console.log("already updated. Wait " + minutes + " mins for a new updates");
       }
     })
-  }
+  },
 }
 
-//CALLS
+// METHODS
 // ==========================================================
 	
-// make the API call on doc ready
+	// On Ready for API calls
 $(document).ready(interface.api());
