@@ -1,6 +1,7 @@
 
-
-
+.jumbotron#navBar{
+	height: 30px;
+}
 
 .jumbotron{
 
@@ -28,10 +29,6 @@
 	margin-right: 20px;
 }
 
-.carousel{
-	height: 720px;
-	background-color: #3d4345;
-}
 .carousel-inner{
 	height: 720px;
 	width: 100%;
@@ -48,7 +45,6 @@ h1#abouttitle{
 text-align: center;
 
 }
-
 
 #aboutUsmodal{
 	background-color: #fff;
@@ -96,10 +92,6 @@ p#modalpara{
 {
   background-color: gray;
   border: none;
-}
-
-.btn-primary:visited{
-	border: none;
 }
 
 .carousel-control right{
