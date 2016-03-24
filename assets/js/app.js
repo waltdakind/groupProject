@@ -43,11 +43,13 @@ function pageDisplay(iteration) {
   var introText = $('<p>').text(intro);
   var wikiLink = $('<a>').text("Click here for more info")
                   .attr('target', '_blank')
-                  .attr('href', link)
+                  .attr('href', link);
+  var videoDiv = $('<div>').append(video)
+                  .addClass("embed-container");
 
   // append it all to the proper divs
   $('#wikiSpot').empty().append(titleText, introText, wikiLink);
-  $('#videoSpot').empty().append(video);
+  $('#videoSpot').empty().append(videoDiv);
 
 }
 
@@ -206,7 +208,7 @@ var interface = {
     // base youtube URL
     var youtube_url = "https://www.googleapis.com/youtube/v3/" +
                       "search?part=snippet&maxResults=1&type=video" +
-                      "&order=relevance&videoEmbeddable=true" +
+                      "&order=relevance&videoEmbeddable=true&videoSyndicated=true&safeSearch=strict" +
                       "&key=AIzaSyDmDiJaKVpOL729WgW2zpbnpzR_XKKM_Es&q=";
     // add topic to url
     youtube_url += topic;
