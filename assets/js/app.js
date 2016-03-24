@@ -205,7 +205,8 @@ var interface = {
     topic = encodeURI(topic);
     // base youtube URL
     var youtube_url = "https://www.googleapis.com/youtube/v3/" +
-                      "search?part=snippet&maxResults=1&type=video&order=relevance" +
+                      "search?part=snippet&maxResults=1&type=video" +
+                      "&order=relevancevideoEmbeddable=true" +
                       "&key=AIzaSyDmDiJaKVpOL729WgW2zpbnpzR_XKKM_Es&q=";
     // add topic to url
     youtube_url += topic;
