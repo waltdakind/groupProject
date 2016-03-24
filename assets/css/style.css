@@ -5,7 +5,7 @@
 
 .jumbotron{
 
-	height: 720px;
+	height: 300px;
 	margin-bottom: 550px;
 }
 
@@ -30,8 +30,16 @@
 }
 
 .carousel-inner{
-	height: 720px;
+	height: 300px;
 	width: 100%;
+}
+
+.car-image {
+	max-height: 250px;
+}
+
+.car-title {
+	text-align: center
 }
 
 /*.carousel-inner>.item>a>img, .carousel-inner>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img {
@@ -104,13 +112,7 @@ p#modalpara{
 	float: left;
 }
 
-#rightArrow{
+#rightArrow, #leftArrow{
 	font-size: 75px;
-	margin-top: 360px;
+	margin-top: 110px;
 }
-
-#leftArrow{
-	font-size: 75px;
-	margin-top: 360px;
-}
-

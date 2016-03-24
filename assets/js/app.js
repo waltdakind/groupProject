@@ -15,8 +15,43 @@ var wikiSearch 	= "";
 var wikiUrlBase = "https://en.wikipedia.org/w/api.php?format=json&action=query&&redirects&prop=extracts|pageimages&exintro=&explaintext=&titles=";
 
 // ==========================================================
-/* 2: Functions / Obejects
+/* 2: Functions / Objects
  * ======================= */  
+
+function carDisplay(iteration) {
+    var img = $('<img>').attr("data-appendage", (iteration))
+              .addClass("car-image").addClass("img-responsive").addClass("center-block")
+              .attr("alt", appendages[iteration].title)
+              .attr("src", appendages[iteration].imageURL);
+
+    var theTitle = $('<h3>').text(appendages[iteration].title)
+                    .addClass("car-title");
+    var theDiv = $('<div>').addClass("col-xs-4");
+    theDiv.append(img, theTitle);
+    $("div.c" + (iteration)).append(theDiv);
+}
+
+function pageDisplay(iteration) {
+  // save the info from this iteration in the appendages array
+  var title = appendages[iteration].title;
+  var intro = appendages[iteration].intro;
+  var link = appendages[iteration].link;
+  var video = decodeURI(appendages[iteration].video);
+
+  // format the info
+  var titleText = $('<h4>').text(title);
+  var introText = $('<p>').text(intro);
+  var wikiLink = $('<a>').text("Click here for more info")
+                  .attr('target', '_blank')
+                  .attr('href', link)
+
+  // append it all to the proper divs
+  $('#wikiSpot').empty().append(titleText, introText, wikiLink);
+  $('#videoSpot').empty().append(video);
+
+}
+
+
 
 // main interface
 var interface = {
@@ -124,31 +159,32 @@ var interface = {
             // grab title
             title = this.title;
 
-            // push to wikiInfo arr
-            siteInfo[iterator] = {
-              title: title,
-              intro: intro,
-              link: wikiLink
-            };
-
-            // if there's a page image, grab the image info
-            if(this.pageimage) {
-
-              // save the image filename
+            // only do this if there's a page image
+            if (this.pageimage) {
+              // grab image name
               imageFile = this.pageimage;
 
               // save the url for the thumbnail
               thumbURL = this.thumbnail.source;
 
-              // with Regex, grab the portion of the thumbnail we need to construct the full image url
+              // with regex, grab the en or commons portion of the full url
+              var enOrCommon = thumbURL.match(/wikipedia\/(.*?)(\/|$)/)[1];
+
+              // with regex, grab the portion of the thumbnail we need to construct the full image url
               var fullPortion = thumbURL.match(/thumb\/(.*?)(....|$)/)[2];
 
               // concatenate the right vars for the full-res image src
-              var fullURL = "https://upload.wikimedia.org/wikipedia/commons/" +
+              var fullURL = "https://upload.wikimedia.org/wikipedia/"+ enOrCommon + "/" +
                             fullPortion + "/" + imageFile;
-
-              // add that to the corresponding siteInfo
-              siteInfo[iterator].imageURL = fullURL;
+            } 
+            // if we caught everything we needed, push it to the siteInfo arr
+            if (title && intro && wikiLink && fullURL) {
+              siteInfo[iterator] = {
+                title: title,
+                intro: intro,
+                link: wikiLink,
+                imageURL: fullURL
+              };
             }
           }
         })
@@ -201,23 +237,8 @@ var interface = {
       appendageRef.push(siteInfo[iterator]);
       // then push to our local array
       appendages.push(siteInfo[iterator]);
-      // then check if it has the image url
-      if (appendages[appendages.length - 1].imageURL) {
-        var img = $('<img>').addClass("c-img" + (appendages.length - 1))
-                  .addClass("carImage").addClass("img-responsive")
-                  .attr("alt", appendages[appendages.length - 1].title)
-                  .attr("src", appendages[appendages.length - 1].imageURL);
-
-        var theTitle = $('<h3>').text(appendages[appendages.length - 1].title)
-                        .addClass("title");
-        var theDiv = $('<div>').addClass("col-xs-4");
-        theDiv.append(img, theTitle);
-        $("div.c" + (appendages.length-1)).append(theDiv);
-      }
-      // if no image, remove it from the appendages array
-      else {
-        appendages.splice((appendages.length - 1), 1);
-      }
+      // then append info from local array into the carousel
+      carDisplay(appendages.length - 1)
     })
   },
 
@@ -245,8 +266,19 @@ var interface = {
       }
       // if updated within 5 mins, console how many mins we have left for new data
       else {
+        // let the console know how long to wait for next update
         var minutes = Math.ceil(5 - (time_dif / 60000));
         console.log("already updated. Wait " + minutes + " mins for a new updates");
+
+        // grab appendages info from firebase
+        appendageRef.once("value", function(snapshot){
+          snapshot.forEach(function(childSnapshot) {
+            appendages.push(childSnapshot.val());
+          })
+          for (var i = 0; i < appendages.length; i++) {
+            carDisplay(i);
+          }
+        })
       }
     })
   }
@@ -259,3 +291,7 @@ var interface = {
 $(document).ready(interface.api());
 
 // make it so that images populate the div on click
+$(document).on("click", ".car-image", function() {
+  var iteration = $(this).attr("data-appendage");
+  pageDisplay(iteration);
+})
