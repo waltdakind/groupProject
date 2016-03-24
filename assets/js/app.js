@@ -1,10 +1,10 @@
 // SETUP VARIABLES
 // ==========================================================
 
-// Trend Array
+// arrays and objects for saving info
 var trends = [];
 var siteInfo = [];
-var appendages = Object;
+var appendages = [];
 
 var dateRef = new Firebase("https://uncommitteds.firebaseio.com/timeAdded");
 var appendageRef = new Firebase("https://uncommitteds.firebaseio.com/appendages");
@@ -14,20 +14,14 @@ var wikiSearch 	= "";
 // URL  to query wikipedia
 var wikiUrlBase = "https://en.wikipedia.org/w/api.php?format=json&action=query&&redirects&prop=extracts|pageimages&exintro=&explaintext=&titles=";
 
-// Array to hold the various article info
-//var wikiArray = [];
-
-// FUNCTIONS wikiUrl
 // ==========================================================
 /* 2: Functions / Obejects
- * ======================= */
-
-// get a popular youtube video with a keyword, place at 'location' (like jQuery)
-  
+ * ======================= */  
 
 // main interface
 var interface = {
 
+  // format any trend names with hashtags and camelCasing
   formatter : function(trendName){
     // first, remove any initial hashtags
     var newName = "";
@@ -55,12 +49,13 @@ var interface = {
         }
       }
     }
-
     // return the new word
     return trendName;
   },
-  // call twitter push trends into trend array
+
+  // call twitter and push trends into a global trends array
   twitter: function() {
+    // start ajax call
     $.ajax({
 
       // call our get_tweets php file
@@ -87,16 +82,18 @@ var interface = {
       error: function(errors) {
         console.log(errors);
       }
+    // jquery promise calls wikipedia for each trend
     }).done(function(){
       appendageRef.set("");
       for (var i = 0; i < trends.length || 10 < siteInfo.length; i++) {
-        console.log(interface.wikipedia(wikiUrlBase + trends[i], i));
+        interface.wikipedia(wikiUrlBase + trends[i], i);
       } 
     })
   },
   // call wikipedia api
   wikipedia: function(wikiUrl, iterator) {    
-    // The AJAX function uses the URL and Gets the JSON data associated with it. The data then gets stored in the variable called: "wikiData"
+    // The AJAX function uses the URL and Gets the JSON data associated with it. 
+    // The data then gets stored in the variable called: "wikiData"
     $.ajax({url: wikiUrl,
         jsonp: "callback",
         dataType: 'jsonp',
@@ -123,10 +120,9 @@ var interface = {
 
             // grab intro
             intro = this.extract;
-            // console.log(intro);
+
             // grab title
             title = this.title;
-            // console.log(title);
 
             // push to wikiInfo arr
             siteInfo[iterator] = {
@@ -134,33 +130,40 @@ var interface = {
               intro: intro,
               link: wikiLink
             };
+
             // if there's a page image, grab the image info
             if(this.pageimage) {
+
+              // save the image filename
               imageFile = this.pageimage;
+
+              // save the url for the thumbnail
               thumbURL = this.thumbnail.source;
-              console.log(thumbURL);
+
+              // with Regex, grab the portion of the thumbnail we need to construct the full image url
               var fullPortion = thumbURL.match(/thumb\/(.*?)(....|$)/)[2];
+
+              // concatenate the right vars for the full-res image src
               var fullURL = "https://upload.wikimedia.org/wikipedia/commons/" +
                             fullPortion + "/" + imageFile;
+
+              // add that to the corresponding siteInfo
               siteInfo[iterator].imageURL = fullURL;
-
-              // TIME FOR INSANITY
-
-
             }
           }
-          else {
-            //console.log("noWiki")
-          };
         })
       }
+    // jQuery promise calls youtube to get a video for the wiki entry
     }).done(function() {
-      console.log("okay");
+
+      // if there's no site, don't move forward
       if (siteInfo[iterator] != undefined) {
+        // otherwise call our youtube function
         interface.youtube(siteInfo[iterator].title, iterator);
       }
     })
   },
+
   // youtube api call
   youtube: function(topic, iterator) {
     topic = encodeURI(topic);
@@ -178,25 +181,43 @@ var interface = {
       success: function(response) {        
         // get video id
         var videoID = response.items[0].id.videoId;
-        console.log(videoID);
 
-        // make embed
+        // make the youtube embed
         var embed = $('<iframe frameborder="0" allowfullscreen></iframe>')
         embed.attr('width', "560") 
              .attr('height', "315" )
              .attr('src', "https://www.youtube.com/embed/" + videoID);
         
-        // send the iframe to the right part of siteInfo
+        // send the iframe to the right part of siteInfo as a string
         siteInfo[iterator].video = embed[0].outerHTML;
       },
+      // catch errors
       error: function(error) {
         console.log("youtubeCatch Error: " + error);
       }
+    // jQuery promise to push the current element of the siteInfo array to fireBase
     }).done(function(){
+      // first push to firebase
       appendageRef.push(siteInfo[iterator]);
-      appendageRef.once("value", function(snapshot){
-        appendages = snapshot.val();
-      })
+      // then push to our local array
+      appendages.push(siteInfo[iterator]);
+      // then check if it has the image url
+      if (appendages[appendages.length - 1].imageURL) {
+        var img = $('<img>').addClass("c-img" + (appendages.length - 1))
+                  .addClass("carImage").addClass("img-responsive")
+                  .attr("alt", appendages[appendages.length - 1].title)
+                  .attr("src", appendages[appendages.length - 1].imageURL);
+
+        var theTitle = $('<h3>').text(appendages[appendages.length - 1].title)
+                        .addClass("title");
+        var theDiv = $('<div>').addClass("col-xs-4");
+        theDiv.append(img, theTitle);
+        $("div.c" + (appendages.length-1)).append(theDiv);
+      }
+      // if no image, remove it from the appendages array
+      else {
+        appendages.splice((appendages.length - 1), 1);
+      }
     })
   },
 
@@ -204,10 +225,10 @@ var interface = {
   api: function() {
     // first check if time has been updated
     dateRef.once("value", function(snapshot){
-      // catch the appendages obj in a global var
-      appendageRef.once("value", function(snapshot){
-        appendages = snapshot.val();
-      })
+      // // catch the appendages obj in a global var
+      // appendageRef.once("value", function(snapshot){
+      //   appendages = snapshot.val();
+      // })
       // catch the timestamp of the last update
       if (snapshot.exists()) {
         var time_record = snapshot.val();
@@ -217,11 +238,12 @@ var interface = {
         var time_dif = time_now - time_record;
       }
       if (time_dif >= 300000 || !snapshot.exists()) { 
-        // then make ajax calls
+        // First log the date to firebase
         dateRef.set(Date.now());
+        // then make ajax calls. 
         interface.twitter();
       }
-      // if updated within 5 mins, tell us how many mins we have left for new data
+      // if updated within 5 mins, console how many mins we have left for new data
       else {
         var minutes = Math.ceil(5 - (time_dif / 60000));
         console.log("already updated. Wait " + minutes + " mins for a new updates");
@@ -235,3 +257,5 @@ var interface = {
 	
 // make the API call on doc ready
 $(document).ready(interface.api());
+
+// make it so that images populate the div on click
