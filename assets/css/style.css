@@ -6,7 +6,7 @@
 .jumbotron{
 
 	height: 300px;
-	margin-bottom: 550px;
+	margin-bottom: 100px;
 }
 
 .navbar{
@@ -29,6 +29,10 @@
 	margin-right: 20px;
 }
 
+.carousel-control {
+	width:5%;
+}
+
 .carousel-inner{
 	height: 300px;
 	width: 100%;
@@ -36,6 +40,10 @@
 
 .car-image {
 	max-height: 250px;
+}
+
+.car-image:hover {
+	cursor:pointer;
 }
 
 .car-title {
@@ -125,10 +133,22 @@ p#modalpara{
 	overflow: hidden; 
 	max-width: 100%; 
 } 
-	.embed-container iframe, .embed-container object, .embed-container embed { 
-		position: absolute; 
-		top: 0; 
-		left: 0; 
-		width: 100%; 
-		height: 100%; 
+.embed-container iframe, .embed-container object, .embed-container embed { 
+	position: absolute; 
+	top: 0; 
+	left: 0; 
+	width: 100%; 
+	height: 100%; 
+}
+
+/* Extra Rules for Mobile */
+@media screen and (max-width: 959px) {
+	.carousel-control {
+		width:10%;
 	}
+}
+@media screen and (max-width: 500px) {
+	.carousel-control {
+		width:15%;
+	}
+}

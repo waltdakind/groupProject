@@ -6,29 +6,74 @@ var trends = [];
 var siteInfo = [];
 var appendages = [];
 
+// firebase objects
 var dateRef = new Firebase("https://uncommitteds.firebaseio.com/timeAdded");
 var appendageRef = new Firebase("https://uncommitteds.firebaseio.com/appendages");
-// user's inputs via HTML
-var wikiSearch 	= "";
 
 // URL  to query wikipedia
 var wikiUrlBase = "https://en.wikipedia.org/w/api.php?format=json&action=query&&redirects&prop=extracts|pageimages&exintro=&explaintext=&titles=";
+
+// counters for carDisplay function
+var currentCar = 0;
 
 // ==========================================================
 /* 2: Functions / Objects
  * ======================= */  
 
 function carDisplay(iteration) {
-    var img = $('<img>').attr("data-appendage", (iteration))
-              .addClass("car-image").addClass("img-responsive").addClass("center-block")
-              .attr("alt", appendages[iteration].title)
-              .attr("src", appendages[iteration].imageURL);
+  
+  var addRow = false;
+  // test if we need to add a row to the carousel
+  console.log(iteration);
+  if (iteration % 3 === 0 || iteration === 0) {
+    addRow = true;
+  }
+  console.log(addRow);
+  // test for the current car row
+  currentRow = Math.floor(iteration/3);
 
-    var theTitle = $('<h3>').text(appendages[iteration].title)
-                    .addClass("car-title");
-    var theDiv = $('<div>').addClass("col-xs-4");
-    theDiv.append(img, theTitle);
-    $("div.c" + (iteration)).append(theDiv);
+  // if we need to add a row and indicator, do it now 
+  if (addRow) {
+    console.log('ok');
+    // first make the row
+    var row = $('<div>').addClass("c" + currentRow)
+              .addClass('row-fluid')
+              .addClass('item');
+
+    // if its the first row, add the active class
+    if (currentRow === 0) {
+      row.addClass('active');
+    }
+
+    // append it to the main car div
+    $('.carousel-inner').append(row);
+
+    // now construct the indicator
+    var indicator = $('<li>').attr('data-target', '#myCarousel')
+                    .attr('data-slide-to' + currentRow);
+
+    // and add it to the carousel
+    $('.carousel-indicators').append(indicator);
+  }
+
+  // Now for inside the row: make the car image
+  var img = $('<img>').attr("data-appendage", (iteration))
+            .addClass("car-image").addClass("img-responsive").addClass("center-block")
+            .attr("alt", appendages[iteration].title)
+            .attr("src", appendages[iteration].imageURL);
+
+  // make the car title
+  var theTitle = $('<h3>').text(appendages[iteration].title)
+                  .addClass("car-title");
+
+  // make the car div
+  var theDiv = $('<div>').addClass("col-xs-4");
+
+  // append the image and title to the new div
+  theDiv.append(img, theTitle);
+
+  // father the current row with the latest div 
+  $("div.c" + currentRow).append(theDiv);
 }
 
 function pageDisplay(iteration) {
@@ -113,6 +158,7 @@ var interface = {
 
           // push all of the current trend's data to firebase
           trends.push(latestTrends[i].name);
+          console.log(latestTrends[i].name);
         }
       },
       // send error message on error
@@ -208,7 +254,7 @@ var interface = {
     // base youtube URL
     var youtube_url = "https://www.googleapis.com/youtube/v3/" +
                       "search?part=snippet&maxResults=1&type=video" +
-                      "&order=relevance&videoEmbeddable=true&videoSyndicated=true&safeSearch=strict" +
+                      "&order=relevance&videoEmbeddable=true&videoSyndicated=true" +
                       "&key=AIzaSyDmDiJaKVpOL729WgW2zpbnpzR_XKKM_Es&q=";
     // add topic to url
     youtube_url += topic;
