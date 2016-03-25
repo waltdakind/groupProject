@@ -98,6 +98,113 @@ function pageDisplay(iteration) {
 
 }
 
+// what we do after a succesful AJAX call to wiki
+function wikiEach(wikiData, iterator, user) {
+  // containers for what we'll be grabbing
+  var pageid  = "";
+  var intro   = "";
+  var title   = "";
+  var thumbURL = "";
+  var imageFile = "";
+
+  // run through each of the pages (there's only one)
+  $.each(wikiData.query.pages, function() {
+
+    // if there's a page id, run this information
+    if(this.pageid){
+      // grab pageid
+      pageid = this.pageid;
+      var wikiLink = "https://en.wikipedia.org/?curid=" + pageid;
+
+      // grab intro
+      intro = this.extract;
+
+      // grab title
+      title = this.title;
+
+      // only do this if there's a page image
+      if (this.pageimage) {
+        console.log("there's a pageimage!");
+        // grab image name
+        imageFile = this.pageimage;
+
+        // save the url for the thumbnail
+        thumbURL = this.thumbnail.source;
+
+        // with regex, grab the en or commons portion of the full url
+        var enOrCommon = thumbURL.match(/wikipedia\/(.*?)(\/|$)/)[1];
+
+        // with regex, grab the portion of the thumbnail we need to construct the full image url
+        var fullPortion = thumbURL.match(/thumb\/(.*?)(....|$)/)[2];
+
+        // concatenate the right vars for the full-res image src
+        var fullURL = "https://upload.wikimedia.org/wikipedia/"+ enOrCommon + "/" +
+                      fullPortion + "/" + imageFile;
+      } 
+      // if we caught everything we needed, push it to the siteInfo arr
+      if (title && intro && wikiLink && fullURL) {
+        siteInfo[iterator] = {
+          title: title,
+          intro: intro,
+          link: wikiLink,
+          imageURL: fullURL
+        }
+      } 
+      //otherwise, if this was a user-submitted trend, let them know Wiki didn't turn up enough info
+      if(user) {
+        console.log("Yep");
+        // no title or link?
+        if (!title || !link) {
+          $('#trend-errors').html('<p>Sorry, your trend didn\'t turn up on Wikipedia.</p>')
+        }
+        // no intro?
+        else if (!intro){
+          $('#trend-errors').html('<p>Sorry, Wikipedia did not have enough written about your trend to display on the site.</p>')
+        } // no image?
+        else if (!fullURL){
+          $('#trend-errors').html('<p>Sorry, we couldn\'t find an image from Wikipedia to display for your trend</p>')
+        }
+      }
+    }
+    // if there's no page id and it's a user submitted trend, display an error
+    else if (user) {
+      $('#trend-errors').html('<p>Sorry, your trend didn\'t turn up on Wikipedia</p>');
+    }
+  })
+}
+
+function userTrend(trend, iterator) {
+  // trim the trend
+  var theTrend = trend.trim();
+
+  // call wikipedia api
+  var wikiUrl = wikiUrlBase + theTrend;
+  $.ajax({url: wikiUrl,
+    jsonp: "callback",
+    dataType: 'jsonp',
+    data: {
+      q: "Get relevant data from twitter trend",
+      format: "json"
+    },
+    // on success, save the wiki info 
+    success: function(wikiData) {
+      wikiEach(wikiData, iterator, true);
+    },
+    // display error if wikipedia has an AJAX issue
+    error: function(errors) {
+      $('#trend-errors').html('<p>Sorry, TrendGetter got an error when accessing the Wikipedia API.</p>')
+    }
+  // when ajax call finishes, do youtube
+  }).done(function() {
+    console.log(siteInfo);
+    // if there's no site, don't move forward
+    if (siteInfo[iterator] != undefined) {
+      // otherwise call our youtube function, which will add it to the local array
+      interface.youtube(siteInfo[iterator].title, iterator, false);
+    }
+  })
+}
+
 
 
 // main interface
@@ -185,71 +292,21 @@ var interface = {
           format: "json"
         },
       success: function(wikiData) {
-        // containers for what we'll be grabbing
-        var pageid  = "";
-        var intro   = "";
-        var title   = "";
-        var thumbURL = "";
-        var imageFile = "";
-
-        // run through each of the pages (there's only one)
-        $.each(wikiData.query.pages, function() {
-
-          // if there's a page id, run this information
-          if(this.pageid){
-            // grab pageid
-            pageid = this.pageid;
-            var wikiLink = "https://en.wikipedia.org/?curid=" + pageid;
-
-            // grab intro
-            intro = this.extract;
-
-            // grab title
-            title = this.title;
-
-            // only do this if there's a page image
-            if (this.pageimage) {
-              // grab image name
-              imageFile = this.pageimage;
-
-              // save the url for the thumbnail
-              thumbURL = this.thumbnail.source;
-
-              // with regex, grab the en or commons portion of the full url
-              var enOrCommon = thumbURL.match(/wikipedia\/(.*?)(\/|$)/)[1];
-
-              // with regex, grab the portion of the thumbnail we need to construct the full image url
-              var fullPortion = thumbURL.match(/thumb\/(.*?)(....|$)/)[2];
-
-              // concatenate the right vars for the full-res image src
-              var fullURL = "https://upload.wikimedia.org/wikipedia/"+ enOrCommon + "/" +
-                            fullPortion + "/" + imageFile;
-            } 
-            // if we caught everything we needed, push it to the siteInfo arr
-            if (title && intro && wikiLink && fullURL) {
-              siteInfo[iterator] = {
-                title: title,
-                intro: intro,
-                link: wikiLink,
-                imageURL: fullURL
-              };
-            }
-          }
-        })
+        wikiEach(wikiData, iterator, false)
       }
     // jQuery promise calls youtube to get a video for the wiki entry
     }).done(function() {
 
       // if there's no site, don't move forward
       if (siteInfo[iterator] != undefined) {
-        // otherwise call our youtube function
-        interface.youtube(siteInfo[iterator].title, iterator);
+        // otherwise call our youtube function, with saveToFb (third param) set to true
+        interface.youtube(siteInfo[iterator].title, iterator, true);
       }
     })
   },
 
   // youtube api call
-  youtube: function(topic, iterator) {
+  youtube: function(topic, iterator, saveToFb) {
     topic = encodeURI(topic);
     // base youtube URL
     var youtube_url = "https://www.googleapis.com/youtube/v3/" +
@@ -282,12 +339,23 @@ var interface = {
       }
     // jQuery promise to push the current element of the siteInfo array to fireBase
     }).done(function(){
-      // first push to firebase
-      appendageRef.push(siteInfo[iterator]);
-      // then push to our local array
-      appendages.push(siteInfo[iterator]);
-      // then append info from local array into the carousel
-      carDisplay(appendages.length - 1)
+      // first push to firebase if video for iteration of siteInfo exists, and if saveToFb is true
+      if (siteInfo[iterator].video && saveToFb) {
+        appendageRef.push(siteInfo[iterator]);
+      }
+      // then push to our local array if iteration of siteInfo exists
+      if (siteInfo[iterator].video) {
+        appendages.push(siteInfo[iterator]);
+        // then append info from local array into the carousel
+        carDisplay(appendages.length - 1);
+      }
+      // else if saveToFb is false (and thus user submitted) display an error
+      else {
+        if (!saveToFb) {
+          $('#trend-errors').html('<p>Sorry, your trend didn\'t turn up on Youtube</p>')
+        }
+      }
+
     })
   },
 
@@ -343,4 +411,16 @@ $(document).ready(interface.api());
 $(document).on("click", ".car-image", function() {
   var iteration = $(this).attr("data-appendage");
   pageDisplay(iteration);
+})
+
+$(document).on('click', '#trend-button', function() {
+  // get user input
+  var thisTrend = $('#trend-input').val().trim();
+  // clear the input field
+  $('#trend-input').val('');
+  console.log(siteInfo.length);
+  // run the userTrend function to add it to the local carousel
+  userTrend(thisTrend, (siteInfo.length));
+  // stop the page from refreshing on button click
+  return false;
 })
