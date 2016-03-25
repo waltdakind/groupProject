@@ -24,17 +24,14 @@ function carDisplay(iteration) {
   
   var addRow = false;
   // test if we need to add a row to the carousel
-  console.log(iteration);
   if (iteration % 3 === 0 || iteration === 0) {
     addRow = true;
   }
-  console.log(addRow);
   // test for the current car row
   currentRow = Math.floor(iteration/3);
 
   // if we need to add a row and indicator, do it now 
   if (addRow) {
-    console.log('ok');
     // first make the row
     var row = $('<div>').addClass("c" + currentRow)
               .addClass('row-fluid')
@@ -50,7 +47,8 @@ function carDisplay(iteration) {
 
     // now construct the indicator
     var indicator = $('<li>').attr('data-target', '#myCarousel')
-                    .attr('data-slide-to' + currentRow);
+                    .attr('data-slide-to', currentRow);
+    console.log(indicator);
 
     // and add it to the carousel
     $('.carousel-indicators').append(indicator);
@@ -124,7 +122,6 @@ function wikiEach(wikiData, iterator, user) {
 
       // only do this if there's a page image
       if (this.pageimage) {
-        console.log("there's a pageimage!");
         // grab image name
         imageFile = this.pageimage;
 
@@ -152,23 +149,22 @@ function wikiEach(wikiData, iterator, user) {
       } 
       //otherwise, if this was a user-submitted trend, let them know Wiki didn't turn up enough info
       if(user) {
-        console.log("Yep");
         // no title or link?
-        if (!title || !link) {
-          $('#trend-errors').html('<p>Sorry, your trend didn\'t turn up on Wikipedia.</p>')
+        if (!title || !wikiLink) {
+          $('#trend-mes').html('<p>Sorry, your trend didn\'t turn up on Wikipedia.</p>')
         }
         // no intro?
         else if (!intro){
-          $('#trend-errors').html('<p>Sorry, Wikipedia did not have enough written about your trend to display on the site.</p>')
+          $('#trend-mes').html('<p>Sorry, Wikipedia did not have enough written about your trend to display on the site.</p>')
         } // no image?
         else if (!fullURL){
-          $('#trend-errors').html('<p>Sorry, we couldn\'t find an image from Wikipedia to display for your trend</p>')
+          $('#trend-mes').html('<p>Sorry, we couldn\'t find an image from Wikipedia to display for your trend</p>')
         }
       }
     }
     // if there's no page id and it's a user submitted trend, display an error
     else if (user) {
-      $('#trend-errors').html('<p>Sorry, your trend didn\'t turn up on Wikipedia</p>');
+      $('#trend-mes').html('<p>Sorry, your trend didn\'t turn up on Wikipedia</p>');
     }
   })
 }
@@ -192,11 +188,10 @@ function userTrend(trend, iterator) {
     },
     // display error if wikipedia has an AJAX issue
     error: function(errors) {
-      $('#trend-errors').html('<p>Sorry, TrendGetter got an error when accessing the Wikipedia API.</p>')
+      $('#trend-mes').html('<p>Sorry, TrendGetter got an error when accessing the Wikipedia API.</p>')
     }
   // when ajax call finishes, do youtube
   }).done(function() {
-    console.log(siteInfo);
     // if there's no site, don't move forward
     if (siteInfo[iterator] != undefined) {
       // otherwise call our youtube function, which will add it to the local array
@@ -265,7 +260,6 @@ var interface = {
 
           // push all of the current trend's data to firebase
           trends.push(latestTrends[i].name);
-          console.log(latestTrends[i].name);
         }
       },
       // send error message on error
@@ -348,11 +342,13 @@ var interface = {
         appendages.push(siteInfo[iterator]);
         // then append info from local array into the carousel
         carDisplay(appendages.length - 1);
+        // if saveToFb is true (and thus user submitted), tell the user we added the topic
+        $('#trend-mes').html('<p>Topic added to the carousel!</p>');
       }
       // else if saveToFb is false (and thus user submitted) display an error
       else {
         if (!saveToFb) {
-          $('#trend-errors').html('<p>Sorry, your trend didn\'t turn up on Youtube</p>')
+          $('#trend-mes').html('<p>Sorry, your trend didn\'t turn up on Youtube</p>')
         }
       }
 
@@ -418,7 +414,6 @@ $(document).on('click', '#trend-button', function() {
   var thisTrend = $('#trend-input').val().trim();
   // clear the input field
   $('#trend-input').val('');
-  console.log(siteInfo.length);
   // run the userTrend function to add it to the local carousel
   userTrend(thisTrend, (siteInfo.length));
   // stop the page from refreshing on button click
