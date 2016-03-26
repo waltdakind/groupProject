@@ -280,7 +280,16 @@ var interface = {
           latestTrends[i].name = formatter(latestTrends[i].name);
 
           // push all of the current trend's data to firebase
-          trends.push(latestTrends[i].name);
+          var tweetCounter = 0
+          for (var j = 0; j < trends.length; j++) {
+            if (latestTrends[i].name === trends[j]) {
+              tweetCounter++;
+              console.log('ok');
+            }
+          }
+          if (tweetCounter === 0) {
+            trends.push(latestTrends[i].name);
+          }
         }
       },
       // send error message on error
