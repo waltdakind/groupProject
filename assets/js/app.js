@@ -279,14 +279,18 @@ var interface = {
           // format the name of the current trend
           latestTrends[i].name = formatter(latestTrends[i].name);
 
-          // push all of the current trend's data to firebase
+          // run through all of the earlier trends and check for duplicates
+          // this way we won't have the same trend pop up more than once during the initial call
           var tweetCounter = 0
           for (var j = 0; j < trends.length; j++) {
+
+            // check for duplicate trends
             if (latestTrends[i].name === trends[j]) {
               tweetCounter++;
-              console.log('ok');
+              console.log('duplicate trend found:' + latestTrends[i].name);
             }
           }
+          // of no duplicate, push it to our local trends array
           if (tweetCounter === 0) {
             trends.push(latestTrends[i].name);
           }
@@ -376,8 +380,10 @@ var interface = {
         // then append info from local array into the carousel
         carDisplay(appendages.length - 1);
 
-        // if saveToFb is true (and thus user submitted), tell the user we added the topic
-        $('#trend-mes').html('<p>Topic added to the carousel!</p>');
+        if (!saveToFb) {
+        // if saveToFb is false (and thus user submitted), tell the user we added the topic
+          $('#trend-mes').html('<p>Topic added to the carousel!</p>');
+        }
       }
       
       // else if saveToFb is false (and thus user submitted) display an error
