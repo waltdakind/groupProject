@@ -24,6 +24,22 @@ h4 {
 	width: 100%;
 }
 
+.form-control {
+    display: inline;
+    float: left;
+    margin-top: -50px;
+    width: 25%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
 #trend-mes p {
 	color: #fff;
 	letter-spacing: 1px;
@@ -180,6 +196,70 @@ p#modalpara{
 body{
 	padding-bottom: 100px;
 }
+
+/* sticky footer */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 130px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 100px;
+  background-color: #000000;
+  margin-top: 10px;
+}
+
+.footer h6{
+	text-align: center;
+	color: #ffffff;
+	font-family: 'Lobster', cursive;
+	font-size: 30px;
+	margin-left: 300px;
+	margin-top: 30px;
+
+}
+
+.footer p{
+	font-family: 'Lobster', cursive;
+	float: right;
+	color: #ffffff;
+	margin-right: 20px;
+	margin-top:20px;
+}
+
+.footer p a {
+	color: #ffffff;
+	font-size: 24px;
+}
+
+.footer img {
+	height: 40px;
+	width: 40px;
+	float: right;
+}
+
+#twitterIcon{
+	font-size: 30px;
+	padding: 10px;
+}
+
+#wikiIcon{
+	font-size: 30px;
+	padding: 10px;
+}
+
+#youtubeIcon{
+	font-size: 30px;
+	padding: 10px;
+}
+
 
 /* Extra Rules for Mobile */
 @media screen and (max-width: 1200px) {

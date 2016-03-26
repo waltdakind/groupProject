@@ -26,22 +26,20 @@
 
   </head>
 
-  <nav class="navbar navbar-default">
-  <form role="form">
-  
-    <div class="form-group">
-      <input type="text" class="form-control" id="trend-input" placeholder="Enter a Trend">
-    </div>
-  
-    
-  
-    <button id="trend-button" class="btn btn-primary">Get It!</button>
-    <div id='trend-mes'><!--list user submission messages --></div>
-  </form>
-  <div class="container-fluid">
+  <body>
+  <!-- navbar -->
+   <nav class="navbar navbar-default">  
+    <div class="container-fluid">
     
       <h1 id="logo">TrendGetter</h1> 
-    
+
+       <form>
+          <div class="form-group">
+            <input type="text" class="form-control" id="trend-input" placeholder="Enter a Trend">
+                <button id="trend-button" class="btn btn-success">Get It!</button>
+                <div id='trend-mes'><!--list user submission messages --></div>
+          </div>
+      </form>
   </div>
 
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">About</button>
@@ -53,13 +51,11 @@
       <h1 id="abouttitle">TrendGetter</h1>
         <h3 id="modalcontent">Here at TrendGetter, our goal is simple: keep you informed on what's trending!</h3> <br>
         <p id="modalpara">
-          To use TrendGetter, use the arrows on either side of the page to cycle through images of the latest trending topics according to Twitter. When you see a topic you want to stay informed on, click the arrow underneath that image to <em> Learn More </em>!
+          To use TrendGetter, use the arrows on either side of the page to cycle through images of the latest trending topics according to Twitter. When you see a topic you want to stay informed on, click the image to <em> Learn More </em>!
         </p>
-
+        </div>
     </div>
   </div>
-</div>
-
 </nav>
 
 
@@ -80,11 +76,9 @@
 
    <a class = "carousel-control left" href = "#myCarousel" data-slide = "prev">
      <i class="fa fa-angle-double-left" id="leftArrow"></i>
-    </button>
    </a>
     <a class = "carousel-control right" href = "#myCarousel" data-slide = "next">
       <i class="fa fa-angle-double-right" id="rightArrow"></i>
-    </button>
    </a>
    
 </div> 
@@ -94,7 +88,7 @@
 
 
 
-
+<!-- Where the info will appear -->
 <div class="container" id="infoSpot">
 <div class="row">
   
@@ -112,6 +106,18 @@
 
 </div>
 </div>
+<!-- footer -->
+ <div class="footer">
+  <p> Information Gathered from : <br>
+    <a href="http://www.twitter.com" target="#"> <i class="fa fa-twitter" id="twitterIcon"></i> </a> 
+    
+    <a href="http://www.wikipedia.com" target="#"> <i class="fa fa-wikipedia-w" id="wikiIcon"></i> </a>  
+   
+    <a href="http://www.youtube.com" target="#"> <i class="fa fa-youtube" id="youtubeIcon"></i> </a> 
+  </p>
+   <h6>&copy;TrendGetter</h6>
+    
+  </div>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/style.js"></script>
   </body>
