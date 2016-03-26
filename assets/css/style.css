@@ -157,6 +157,18 @@ p#modalpara{
   border: none;
 }
 
+.btn-success{
+	float: left;
+	clear: both;
+	margin-left: 290px;
+	margin-top: -51px;
+	background-color: #000;
+	font-size: 18px;
+	border: none;
+	background-color: #000;
+  border: none;
+}
+
 /* wikipedia information */
 #wikiSpot {
 	margin-bottom: 40px;
@@ -217,13 +229,12 @@ body {
 }
 
 .footer h6{
-	text-align: center;
+	text-align: left;
 	color: #ffffff;
 	font-family: 'Lobster', cursive;
-	font-size: 30px;
-	margin-left: 300px;
-	margin-top: 30px;
-
+	font-size: 22px;
+	margin-left: 40px;
+	margin-top: 40px;
 }
 
 .footer p{
