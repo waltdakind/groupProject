@@ -366,7 +366,7 @@ body {
 		font-size: 20px;
 	}
 	.btn-success{
-		margin-left: 130px;
+		margin-left: 120px;
 	}
 }
 @media screen and (max-width: 500px) {
@@ -397,6 +397,9 @@ body {
 		font-size: 18px;
 	}
 	.btn-success{
-		margin-left: 100px;
+		display: none;	
+	}
+	.form-control {
+		display: none;
 	}
 }
