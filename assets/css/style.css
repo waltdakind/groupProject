@@ -301,6 +301,9 @@ body {
 		border-radius: 10px;
 		max-width: 300px;
 	}
+	.btn-success{
+		margin-left: 230px;
+	}
 }
 
 /* Extra Rules for Mobile */
@@ -328,6 +331,9 @@ body {
 		height: 180px;
 		border-radius: 10px;
 		max-width: 250px;
+	}
+	.btn-success{
+		margin-left: 170px;
 	}
 }
 
@@ -359,6 +365,9 @@ body {
 	h3 {
 		font-size: 20px;
 	}
+	.btn-success{
+		margin-left: 130px;
+	}
 }
 @media screen and (max-width: 500px) {
 	.carousel-control {
@@ -386,5 +395,8 @@ body {
 	}
 	h3 {
 		font-size: 18px;
+	}
+	.btn-success{
+		margin-left: 100px;
 	}
 }
