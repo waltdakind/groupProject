@@ -1,5 +1,10 @@
-// SETUP VARIABLES
-// ==========================================================
+/* TrendGetter Alpha
+ * Steve, Walt and John
+ * ==================== */
+
+// =======================
+/* 1: Global Variables
+ * ======================= */ 
 
 // arrays and objects for saving info
 var trends = [];
@@ -91,6 +96,7 @@ function pageDisplay(iteration) {
   var titleText = $('<h4>').text(title);
   var introText = $('<p>').text(intro);
   var wikiLink = $('<a>').text("Click here for more info")
+                  .addClass('wiki-link')
                   .attr('target', '_blank')
                   .attr('href', link);
   var videoDiv = $('<div>').append(video)
@@ -315,7 +321,7 @@ var interface = {
     })
   },
 
-  // youtube api call (triggered by Wikipedia and UserTrends)
+  // youtube api call (triggered by wikipedia and userTrends)
   youtube: function(topic, iterator, saveToFb) {
     topic = encodeURI(topic);
 
@@ -364,6 +370,7 @@ var interface = {
         // if saveToFb is true (and thus user submitted), tell the user we added the topic
         $('#trend-mes').html('<p>Topic added to the carousel!</p>');
       }
+      
       // else if saveToFb is false (and thus user submitted) display an error
       else {
         if (!saveToFb) {
@@ -432,8 +439,9 @@ var interface = {
   }
 }
 
-//CALLS
-// ==========================================================
+// =======================
+/* 3: Function Calls
+ * ======================= */ 
 	
 // make the API call on doc ready
 $(document).ready(interface.api());

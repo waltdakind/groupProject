@@ -1,4 +1,10 @@
+/* basic text rules */
+h4 {
+	font-size: 42px;
+	font-family: 'Lobster', cursive;
+}
 
+/* JumboTron */
 .jumbotron#navBar{
 	height: 30px;
 }
@@ -9,6 +15,7 @@
 	margin-bottom: 100px;
 }
 
+/* navigation and trend form */
 .navbar{
 	background-color: #000000;
 	font-family: 'Lobster', cursive;
@@ -33,6 +40,7 @@
 	margin-right: 20px;
 }
 
+/* carousel */
 .carousel-control {
 	width:5%;
 }
@@ -64,29 +72,37 @@
 	text-align: center
 }
 
-/*.carousel-inner>.item>a>img, .carousel-inner>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img {
-    border: 250px,;
-    position: relative;
-    left: 500px;
-    margin-top: 200px;
-}*/
+.carousel-control right{
+	height: 100px;
+}
 
+.carousel-control left{
+	float: left;
+}
+
+#rightArrow, #leftArrow{
+	font-size: 50px;
+	margin-top: 140px;
+}
+
+/* About */
 h1#abouttitle{
-text-align: center;
-
+	text-align: center;
 }
 
 #aboutUsmodal{
 	background-color: #fff;
 	display: block;
-    position: absolute;
-    left: 60%;
-    height: 88%;
-    width: 28%;
-    overflow-y:auto;
-    overflow-x:auto;
-    border-radius: 0px
+  position: absolute;
+  left: 60%;
+  height: 88%;
+  width: 28%;
+  overflow-y:auto;
+  overflow-x:auto;
+  border-radius: 0px
 }
+
+/* headlines in modal */
 h3#modalcontent{
 	text-align:center;
 	font-family: 'Cabin Condensed', sans-serif;
@@ -99,6 +115,7 @@ p#modalpara{
 	margin: 15px;
 }
 
+/* buttons */
 .btn-primary{
 	float: right;
 	clear: both;
@@ -124,22 +141,13 @@ p#modalpara{
   border: none;
 }
 
-.carousel-control right{
-
-	height: 100px;
-
+/* wikipedia information */
+#wikiSpot {
+	margin-bottom: 40px;
 }
 
-.carousel-control left{
-	float: left;
-}
 
-#rightArrow, #leftArrow{
-	font-size: 50px;
-	margin-top: 140px;
-}
-
-/* responsive yt embed from http://embedresponsively.com/ */
+/* responsive youtube embed from http://embedresponsively.com/ */
 .embed-container { 
 	position: relative; 
 	padding-bottom: 56.25%; 
@@ -154,6 +162,8 @@ p#modalpara{
 	width: 100%; 
 	height: 100%; 
 }
+
+/* footer */
 
 .main-footer {
 	position: relative;
@@ -170,8 +180,12 @@ p#modalpara{
 body{
 	padding-bottom: 100px;
 }
+
 /* Extra Rules for Mobile */
 @media screen and (max-width: 1200px) {
+	h4 {
+		text-align: center;
+	}
 	.carousel-control {
 		width:10%;
 	}
@@ -199,7 +213,7 @@ body{
 }
 
 /* Extra Rules for Mobile */
-@media screen and (max-width: 959px) {
+@media screen and (max-width: 992px) {
 	.carousel-control {
 		width:10%;
 	}
@@ -227,6 +241,7 @@ body{
 }
 
 @media screen and (max-width: 767px) {
+
 	.carousel-control {
 		width:10%;
 	}
