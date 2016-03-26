@@ -11,15 +11,20 @@ var dateRef = new Firebase("https://uncommitteds.firebaseio.com/timeAdded");
 var appendageRef = new Firebase("https://uncommitteds.firebaseio.com/appendages");
 
 // URL  to query wikipedia
-var wikiUrlBase = "https://en.wikipedia.org/w/api.php?format=json&action=query&&redirects&prop=extracts|pageimages&exintro=&explaintext=&titles=";
+var wikiUrlBase = "https://en.wikipedia.org/w/api.php?format=json&action=query&redirects" +
+                  "&prop=extracts|pageimages&exintro=&explaintext=&titles=";
 
-// counters for carDisplay function
-var currentCar = 0;
+// base youtube URL
+var youtubeUrlBase =  "https://www.googleapis.com/youtube/v3/" +
+                      "search?part=snippet&maxResults=1&type=video" +
+                      "&order=relevance&videoEmbeddable=true&videoSyndicated=true" +
+                      "&key=AIzaSyDmDiJaKVpOL729WgW2zpbnpzR_XKKM_Es&q=";
 
-// ==========================================================
+// =======================
 /* 2: Functions / Objects
  * ======================= */  
 
+// display images in carousel (see interface.userTrend and interface.api)
 function carDisplay(iteration) {
   
   var addRow = false;
@@ -74,6 +79,7 @@ function carDisplay(iteration) {
   $("div.c" + currentRow).append(theDiv);
 }
 
+// display the trend info on the page (see the call at bottom of page)
 function pageDisplay(iteration) {
   // save the info from this iteration in the appendages array
   var title = appendages[iteration].title;
@@ -93,10 +99,9 @@ function pageDisplay(iteration) {
   // append it all to the proper divs
   $('#wikiSpot').empty().append(titleText, introText, wikiLink);
   $('#videoSpot').empty().append(videoDiv);
-
 }
 
-// what we do after a succesful AJAX call to wiki
+// do this after asuccesful AJAX call to wiki (see interface.wikipedia and interface.userTrend)
 function wikiEach(wikiData, iterator, user) {
   // containers for what we'll be grabbing
   var pageid  = "";
@@ -169,72 +174,82 @@ function wikiEach(wikiData, iterator, user) {
   })
 }
 
-function userTrend(trend, iterator) {
-  // trim the trend
-  var theTrend = trend.trim();
 
-  // call wikipedia api
-  var wikiUrl = wikiUrlBase + theTrend;
-  $.ajax({url: wikiUrl,
-    jsonp: "callback",
-    dataType: 'jsonp',
-    data: {
-      q: "Get relevant data from twitter trend",
-      format: "json"
-    },
-    // on success, save the wiki info 
-    success: function(wikiData) {
-      wikiEach(wikiData, iterator, true);
-    },
-    // display error if wikipedia has an AJAX issue
-    error: function(errors) {
-      $('#trend-mes').html('<p>Sorry, TrendGetter got an error when accessing the Wikipedia API.</p>')
-    }
-  // when ajax call finishes, do youtube
-  }).done(function() {
-    // if there's no site, don't move forward
-    if (siteInfo[iterator] != undefined) {
-      // otherwise call our youtube function, which will add it to the local array
-      interface.youtube(siteInfo[iterator].title, iterator, false);
-    }
-  })
+// display whatever Trend a user looks up (see interface.userTrend)
+function displayUserTrend() {
+  // get user input
+  var thisTrend = $('#trend-input').val().trim();
+  // clear the input field
+  $('#trend-input').val('');
+  // run the userTrend function to add it to the local carousel
+  interface.userTrend(thisTrend, (siteInfo.length));
 }
 
+// format any twitter trend names with hashtags and camelCasing (see interface.twitter)
+function formatter(trendName){
+  // first, remove any initial hashtags
+  var newName = "";
+  if (trendName[0] === '#') {
+    trendName = trendName.slice(1);
+  }
 
+  // now find every instance of a capital letter, starting with second char
+  for (var i = 1; i < trendName.length; i++) {
 
-// main interface
-var interface = {
+    // save current and next char's ascii
+    var curChar = trendName.charCodeAt(i);
+    var nextChar = trendName.charCodeAt(i+1);
+    var lastChar = trendName.charCodeAt(i-1);
 
-  // format any trend names with hashtags and camelCasing
-  formatter : function(trendName){
-    // first, remove any initial hashtags
-    var newName = "";
-    if (trendName[0] === '#') {
-      trendName = trendName.slice(1);
-    }
-
-    // now find every instance of a capital letter, starting with second char
-    for (var i = 1; i < trendName.length; i++) {
-
-      // save current and next char's ascii
-      var curChar = trendName.charCodeAt(i);
-      var nextChar = trendName.charCodeAt(i+1);
-      var lastChar = trendName.charCodeAt(i-1);
-
-      // if curChar is the value for a cap letter, add a space before it...
-      if ( 65 <= curChar && curChar <= 95 ) {
-        // ...but only if there's no issue with other chars
-        if (trendName[i-1] !== " " && trendName[i-1] !== "-") {
-          if (65 >= lastChar || lastChar >= 95) {
-              trendName = trendName.slice(0, i) + " " + trendName.slice(i);
-              // increase counter by 1 on success
-              i++;
-          }
+    // if curChar is the value for a cap letter, add a space before it...
+    if ( 65 <= curChar && curChar <= 95 ) {
+      // ...but only if there's no issue with other chars
+      if (trendName[i-1] !== " " && trendName[i-1] !== "-") {
+        if (65 >= lastChar || lastChar >= 95) {
+            trendName = trendName.slice(0, i) + " " + trendName.slice(i);
+            // increase counter by 1 on success
+            i++;
         }
       }
     }
-    // return the new word
-    return trendName;
+  }
+  // return the new word
+  return trendName;
+};
+
+
+// main interface for API calls
+var interface = {
+
+  userTrend: function (trend, iterator) {
+    // trim the trend
+    var theTrend = trend.trim();
+
+    // call wikipedia api
+    var wikiUrl = wikiUrlBase + theTrend;
+    $.ajax({url: wikiUrl,
+      jsonp: "callback",
+      dataType: 'jsonp',
+      data: {
+        q: "Get relevant data from twitter trend",
+        format: "json"
+      },
+      // on success, save the wiki info 
+      success: function(wikiData) {
+        wikiEach(wikiData, iterator, true);
+      },
+      // display error if wikipedia has an AJAX issue
+      error: function(errors) {
+        $('#trend-mes').html('<p>Sorry, TrendGetter got an error when accessing the Wikipedia API.</p>')
+      }
+    // when ajax call finishes, do youtube
+    }).done(function() {
+      // if there's no site, don't move forward
+      if (siteInfo[iterator] != undefined) {
+        // otherwise call our youtube function, which will add it to the local array
+        interface.youtube(siteInfo[iterator].title, iterator, false);
+      }
+    })
   },
 
   // call twitter and push trends into a global trends array
@@ -256,7 +271,7 @@ var interface = {
         for (var i = 0; i < latestTrends.length; i++){
 
           // format the name of the current trend
-          latestTrends[i].name = interface.formatter(latestTrends[i].name);
+          latestTrends[i].name = formatter(latestTrends[i].name);
 
           // push all of the current trend's data to firebase
           trends.push(latestTrends[i].name);
@@ -274,7 +289,8 @@ var interface = {
       } 
     })
   },
-  // call wikipedia api
+
+  // call wikipedia api (triggered by twitter)
   wikipedia: function(wikiUrl, iterator) {    
     // The AJAX function uses the URL and Gets the JSON data associated with it. 
     // The data then gets stored in the variable called: "wikiData"
@@ -299,22 +315,19 @@ var interface = {
     })
   },
 
-  // youtube api call
+  // youtube api call (triggered by Wikipedia and UserTrends)
   youtube: function(topic, iterator, saveToFb) {
     topic = encodeURI(topic);
-    // base youtube URL
-    var youtube_url = "https://www.googleapis.com/youtube/v3/" +
-                      "search?part=snippet&maxResults=1&type=video" +
-                      "&order=relevance&videoEmbeddable=true&videoSyndicated=true" +
-                      "&key=AIzaSyDmDiJaKVpOL729WgW2zpbnpzR_XKKM_Es&q=";
+
     // add topic to url
-    youtube_url += topic;
+    var youtube_url = youtubeUrlBase + topic;
 
     // make API call to youtube api
     $.ajax({
       url: youtube_url,
       type: 'GET',
-      success: function(response) {        
+      success: function(response) {  
+
         // get video id
         var videoID = response.items[0].id.videoId;
 
@@ -327,21 +340,27 @@ var interface = {
         // send the iframe to the right part of siteInfo as a string
         siteInfo[iterator].video = embed[0].outerHTML;
       },
+
       // catch errors
       error: function(error) {
         console.log("youtubeCatch Error: " + error);
       }
+
     // jQuery promise to push the current element of the siteInfo array to fireBase
     }).done(function(){
+
       // first push to firebase if video for iteration of siteInfo exists, and if saveToFb is true
       if (siteInfo[iterator].video && saveToFb) {
         appendageRef.push(siteInfo[iterator]);
       }
+
       // then push to our local array if iteration of siteInfo exists
       if (siteInfo[iterator].video) {
         appendages.push(siteInfo[iterator]);
+
         // then append info from local array into the carousel
         carDisplay(appendages.length - 1);
+
         // if saveToFb is true (and thus user submitted), tell the user we added the topic
         $('#trend-mes').html('<p>Topic added to the carousel!</p>');
       }
@@ -355,42 +374,58 @@ var interface = {
     })
   },
 
-  // api method: call twitter API for Trends, save it to firebase
+  // the major api method: call twitter API, which will domino into the other APIs
   api: function() {
+
     // first check if time has been updated
     dateRef.once("value", function(snapshot){
-      // // catch the appendages obj in a global var
-      // appendageRef.once("value", function(snapshot){
-      //   appendages = snapshot.val();
-      // })
-      // catch the timestamp of the last update
+
+      // if there's a timestamp logged, run these validations
       if (snapshot.exists()) {
+
+        // catch the timestamp of the last update
         var time_record = snapshot.val();
+
         // catch the current timestamp
         var time_now = Date.now();
+
         // figure out the dif between the recorded time and now
         var time_dif = time_now - time_record;
       }
+
+      // now if 5 minutes has passed (or if there was no snapshot)
+      // then run the api calls we defined
       if (time_dif >= 300000 || !snapshot.exists()) { 
-        // First log the date to firebase
+
+        // First log the new date to firebase
         dateRef.set(Date.now());
-        // then make ajax calls. 
+
+        // then make ajax the calls. 
         interface.twitter();
       }
-      // if updated within 5 mins, console how many mins we have left for new data
-      else {
-        // let the console know how long to wait for next update
-        var minutes = Math.ceil(5 - (time_dif / 60000));
-        console.log("already updated. Wait " + minutes + " mins for a new updates");
 
-        // grab appendages info from firebase
+      // but if 5 mins hasn't passed, don't make a new API call
+      // (twitter restricts the number of calls per token, so this is necessary).
+      else {
+
+        // instead, grab appendages info from firebase
         appendageRef.once("value", function(snapshot){
+
+          // for each child in firebase
           snapshot.forEach(function(childSnapshot) {
+
+            // push the child's value to the local appendages arr
             appendages.push(childSnapshot.val());
           })
+
           for (var i = 0; i < appendages.length; i++) {
+            // run the carousel display function for each appendage
             carDisplay(i);
           }
+
+        // last, let the console know how long to wait for next update
+        var minutes = Math.ceil(5 - (time_dif / 60000));
+        console.log("already updated. Wait " + minutes + " mins for a new updates");
         })
       }
     })
@@ -409,13 +444,12 @@ $(document).on("click", ".car-image", function() {
   pageDisplay(iteration);
 })
 
+// display user trends on click of trend button
 $(document).on('click', '#trend-button', function() {
-  // get user input
-  var thisTrend = $('#trend-input').val().trim();
-  // clear the input field
-  $('#trend-input').val('');
-  // run the userTrend function to add it to the local carousel
-  userTrend(thisTrend, (siteInfo.length));
-  // stop the page from refreshing on button click
+  
+  // use function to display it
+  displayUserTrend();
+  
+  // make sure page doesn't reload
   return false;
 })
